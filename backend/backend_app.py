@@ -8,6 +8,8 @@ CORS(app)  # This will enable CORS for all routes
 posts = [
     {"id": 1, "title": "First post", "content": "This is the first post."},
     {"id": 2, "title": "Second post", "content": "This is the second post."},
+    {"id": 3, "title": "Third post", "content": "This is the third post."},
+
 ]
 
 
@@ -55,7 +57,6 @@ def search_posts():
                 return posts[index], 200
 
     return jsonify({'message': 'No posts with matching parameters found!'}), 400
-
 
 
 @app.route('/api/posts/<int:id>', methods=['PUT'])
@@ -113,7 +114,29 @@ def get_posts():
 
         posts.append(new_post)
 
-        return jsonify(new_post), 201
+        return jsonify(new_post), 20
+
+    sort = request.args.get('sort')
+    direction = request.args.get('direction')
+    reverse = None
+    if direction == 'asc':
+        reverse = False
+    elif direction == 'desc':
+        reverse = True
+    else:
+        return jsonify({'error': 'Invalid direction parameter!'}), 400
+
+    if reverse is not None:
+        if sort not in ('title', 'content') or direction not in ('asc', 'desc'):
+            return jsonify({'error': 'Invalid parameters used!'}), 400
+
+        if sort == 'title':
+            sorted_by_title = sorted(posts, key=lambda x: x['title'], reverse=reverse)
+            return sorted_by_title
+        elif sort == 'content':
+            sorted_by_content = sorted(posts, key=lambda x: x['content'], reverse=reverse)
+            return sorted_by_content
+
     return jsonify(posts)
 
 
