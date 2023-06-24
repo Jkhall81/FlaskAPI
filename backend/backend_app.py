@@ -118,24 +118,25 @@ def get_posts():
 
     sort = request.args.get('sort')
     direction = request.args.get('direction')
-    reverse = None
-    if direction == 'asc':
-        reverse = False
-    elif direction == 'desc':
-        reverse = True
-    else:
-        return jsonify({'error': 'Invalid direction parameter!'}), 400
+    if sort:
+        reverse = None
+        if direction == 'asc':
+            reverse = False
+        elif direction == 'desc':
+            reverse = True
+        else:
+            return jsonify({'error': 'Invalid direction parameter!'}), 400
 
-    if reverse is not None:
-        if sort not in ('title', 'content') or direction not in ('asc', 'desc'):
-            return jsonify({'error': 'Invalid parameters used!'}), 400
+        if reverse is not None:
+            if sort not in ('title', 'content') or direction not in ('asc', 'desc'):
+                return jsonify({'error': 'Invalid parameters used!'}), 400
 
-        if sort == 'title':
-            sorted_by_title = sorted(posts, key=lambda x: x['title'], reverse=reverse)
-            return sorted_by_title
-        elif sort == 'content':
-            sorted_by_content = sorted(posts, key=lambda x: x['content'], reverse=reverse)
-            return sorted_by_content
+            if sort == 'title':
+                sorted_by_title = sorted(posts, key=lambda x: x['title'], reverse=reverse)
+                return sorted_by_title
+            elif sort == 'content':
+                sorted_by_content = sorted(posts, key=lambda x: x['content'], reverse=reverse)
+                return sorted_by_content
 
     return jsonify(posts)
 
